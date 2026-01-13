@@ -87,7 +87,7 @@ export function WelcomeModal() {
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2 text-lg sm:text-xl">
               <Sparkles className="h-5 w-5 sm:h-6 sm:w-6 text-primary flex-shrink-0" />
-              <span>👋 Welcome to Fashion Store CRM</span>
+              <span>👋 Welcome to Sourced UK's Clothing CRM</span>
             </DialogTitle>
             <DialogDescription className="text-sm">
               A complete POS and inventory management system designed for clothing retailers
