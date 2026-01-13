@@ -10,7 +10,7 @@ export type Database = {
   // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
-    PostgrestVersion: "13.0.5"
+    PostgrestVersion: "14.1"
   }
   public: {
     Tables: {
@@ -389,6 +389,33 @@ export type Database = {
           },
         ]
       }
+      locations: {
+        Row: {
+          address: string | null
+          created_at: string
+          demo_session_id: string | null
+          id: number
+          name: string
+          status: string | null
+        }
+        Insert: {
+          address?: string | null
+          created_at?: string
+          demo_session_id?: string | null
+          id?: number
+          name: string
+          status?: string | null
+        }
+        Update: {
+          address?: string | null
+          created_at?: string
+          demo_session_id?: string | null
+          id?: number
+          name?: string
+          status?: string | null
+        }
+        Relationships: []
+      }
       part_exchanges: {
         Row: {
           allowance: number
@@ -726,6 +753,13 @@ export type Database = {
             referencedColumns: ["supplier_id"]
           },
           {
+            foreignKeyName: "products_location_id_fkey"
+            columns: ["location_id"]
+            isOneToOne: false
+            referencedRelation: "locations"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "products_supplier_id_fkey"
             columns: ["supplier_id"]
             isOneToOne: false
@@ -795,7 +829,7 @@ export type Database = {
         Row: {
           discount: number
           id: number
-          product_id: number
+          product_id: number | null
           quantity: number
           sale_id: number
           tax_rate: number
@@ -805,7 +839,7 @@ export type Database = {
         Insert: {
           discount?: number
           id?: number
-          product_id: number
+          product_id?: number | null
           quantity: number
           sale_id: number
           tax_rate?: number
@@ -815,7 +849,7 @@ export type Database = {
         Update: {
           discount?: number
           id?: number
-          product_id?: number
+          product_id?: number | null
           quantity?: number
           sale_id?: number
           tax_rate?: number
@@ -881,9 +915,13 @@ export type Database = {
           sold_at: string
           staff_id: string | null
           staff_member_name: string | null
+          status: string
           subtotal: number
           tax_total: number
           total: number
+          void_reason: string | null
+          voided_at: string | null
+          voided_by: string | null
         }
         Insert: {
           customer_email?: string | null
@@ -898,9 +936,13 @@ export type Database = {
           sold_at?: string
           staff_id?: string | null
           staff_member_name?: string | null
+          status?: string
           subtotal?: number
           tax_total?: number
           total?: number
+          void_reason?: string | null
+          voided_at?: string | null
+          voided_by?: string | null
         }
         Update: {
           customer_email?: string | null
@@ -915,9 +957,13 @@ export type Database = {
           sold_at?: string
           staff_id?: string | null
           staff_member_name?: string | null
+          status?: string
           subtotal?: number
           tax_total?: number
           total?: number
+          void_reason?: string | null
+          voided_at?: string | null
+          voided_by?: string | null
         }
         Relationships: [
           {
@@ -1163,33 +1209,6 @@ export type Database = {
           status?: string | null
           supplier_type?: string
           tags?: string[] | null
-        }
-        Relationships: []
-      }
-      locations: {
-        Row: {
-          id: number
-          name: string
-          address: string | null
-          status: string
-          created_at: string
-          demo_session_id: string | null
-        }
-        Insert: {
-          id?: number
-          name: string
-          address?: string | null
-          status?: string
-          created_at?: string
-          demo_session_id?: string | null
-        }
-        Update: {
-          id?: number
-          name?: string
-          address?: string | null
-          status?: string
-          created_at?: string
-          demo_session_id?: string | null
         }
         Relationships: []
       }
@@ -1513,42 +1532,13 @@ export type Database = {
       }
     }
     Functions: {
-      aged_stock_count: {
-        Args: { days_threshold?: number }
-        Returns: number
-      }
-      audit_prune_older_than: {
-        Args: { days: number }
-        Returns: undefined
-      }
-      gtrgm_compress: {
-        Args: { "": unknown }
-        Returns: unknown
-      }
-      gtrgm_decompress: {
-        Args: { "": unknown }
-        Returns: unknown
-      }
-      gtrgm_in: {
-        Args: { "": unknown }
-        Returns: unknown
-      }
-      gtrgm_options: {
-        Args: { "": unknown }
-        Returns: undefined
-      }
-      gtrgm_out: {
-        Args: { "": unknown }
-        Returns: unknown
-      }
-      is_owner: {
-        Args: { uid: string }
-        Returns: boolean
-      }
-      is_staff: {
-        Args: { uid: string }
-        Returns: boolean
-      }
+      aged_stock_count: { Args: { days_threshold?: number }; Returns: number }
+      audit_prune_older_than: { Args: { days: number }; Returns: undefined }
+      get_user_role: { Args: { uid: string }; Returns: string }
+      is_manager: { Args: { uid: string }; Returns: boolean }
+      is_owner: { Args: { uid: string }; Returns: boolean }
+      is_owner_or_manager: { Args: { uid: string }; Returns: boolean }
+      is_staff: { Args: { uid: string }; Returns: boolean }
       search_everything: {
         Args: { lim?: number; q: string; scope?: string }
         Returns: {
@@ -1560,18 +1550,8 @@ export type Database = {
           url: string
         }[]
       }
-      set_limit: {
-        Args: { "": number }
-        Returns: number
-      }
-      show_limit: {
-        Args: Record<PropertyKey, never>
-        Returns: number
-      }
-      show_trgm: {
-        Args: { "": string }
-        Returns: string[]
-      }
+      show_limit: { Args: never; Returns: number }
+      show_trgm: { Args: { "": string }; Returns: string[] }
     }
     Enums: {
       expense_category:
@@ -1599,7 +1579,7 @@ export type Database = {
         | "adjustment"
         | "return_in"
         | "return_out"
-      user_role: "owner" | "manager" | "staff"
+      user_role: "owner" | "staff" | "manager"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -1755,7 +1735,7 @@ export const Constants = {
         "return_in",
         "return_out",
       ],
-      user_role: ["owner", "manager", "staff"],
+      user_role: ["owner", "staff", "manager"],
     },
   },
 } as const
