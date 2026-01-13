@@ -33,7 +33,7 @@ const defaultSettings: AppSettings = {
   timezone: 'Europe/London',
   reorderPointDefault: 5,
   digitalReceiptDefault: 'none',
-  quickFilterPresets: ['watches', 'rings', 'gold', 'white-gold', 'rose-gold', 'silver', 'in-stock', 'low-stock'],
+  quickFilterPresets: ['shirts', 'dresses', 'jackets', 'cotton', 'leather', 'in-stock', 'at-risk'],
   staffMembers: []
 };
 

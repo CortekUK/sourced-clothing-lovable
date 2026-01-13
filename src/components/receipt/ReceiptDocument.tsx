@@ -28,11 +28,11 @@ export function ReceiptDocument({ data, settings }: ReceiptProps) {
   
   // Get store and branding info from settings
   const store = settings?.store || {
-    name: "Fashion Store",
-    tagline: "Premium Clothing & Accessories",
+    name: "Sourced UK",
+    tagline: "Quality Pre-Loved Fashion",
     address: "123 High Street, London SW1A 1AA",
     phone: "020 7123 4567",
-    email: "info@fashionstore.com"
+    email: "info@sourceduk.com"
   };
   
   const branding = settings?.branding || {

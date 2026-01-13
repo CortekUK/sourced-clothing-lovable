@@ -15,7 +15,7 @@ interface DocumentUploadItem {
   expires_at?: Date;
 }
 
-interface RegisteredWatchSectionProps {
+interface PremiumItemSectionProps {
   isRegistered: boolean;
   onRegisteredChange: (checked: boolean) => void;
   documents: DocumentUploadItem[];
@@ -23,13 +23,13 @@ interface RegisteredWatchSectionProps {
   disabled?: boolean;
 }
 
-export function RegisteredWatchSection({
+export function PremiumItemSection({
   isRegistered,
   onRegisteredChange,
   documents,
   onDocumentsChange,
   disabled = false
-}: RegisteredWatchSectionProps) {
+}: PremiumItemSectionProps) {
   const registrationDocs = documents.filter(doc => 
     doc.doc_type === 'registration' || doc.doc_type === 'warranty'
   );
@@ -41,9 +41,9 @@ export function RegisteredWatchSection({
         <div className="flex items-center space-x-3">
           <Shield className="h-5 w-5 text-primary" />
           <div>
-            <Label className="font-medium">This is a premium item</Label>
+            <Label className="font-medium">Premium / Designer Item</Label>
             <p className="text-sm text-muted-foreground">
-              Enable if this item requires authenticity documentation
+              Enable for designer items requiring authentication
             </p>
           </div>
         </div>
