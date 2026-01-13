@@ -426,7 +426,6 @@ export const useTransactions = () => {
         .select(`
           id, sold_at, subtotal, tax_total, discount_total, total, payment,
           staff_id, customer_name, customer_email,
-          status, voided_at, voided_by, void_reason,
           profiles!fk_sales_staff_id ( full_name ),
           sale_items ( id )
         `)
@@ -460,7 +459,6 @@ export const useTransactionDetails = (saleId?: number) => {
           sales:sale_id (
             id, sold_at, staff_id, payment, customer_name, customer_email, signature_data, notes,
             subtotal, discount_total, tax_total, total, part_exchange_total,
-            status, voided_at, voided_by, void_reason,
             profiles!fk_sales_staff_id ( full_name )
           )
         `)
@@ -517,7 +515,7 @@ export const useSoldItemsReport = () => {
             suppliers!products_supplier_id_fkey ( id, name, supplier_type ),
             consignment_supplier:suppliers!products_consignment_supplier_id_fkey ( id, name, supplier_type )
           ),
-          sales ( id, sold_at, staff_id, staff_member_name, total, status, profiles!fk_sales_staff_id ( full_name ) )
+          sales ( id, sold_at, staff_id, staff_member_name, total, profiles!fk_sales_staff_id ( full_name ) )
         `)
         .order('sales(sold_at)', { ascending: false });
       
@@ -703,14 +701,23 @@ export const useVoidSale = () => {
 
       if (movementError) throw movementError;
 
-      // 3. Update sale status to voided
+      // 3. Mark sale as voided by setting total to 0 and adding void info to notes
+      // Note: The sales table doesn't have status/voided columns, so we store void info in notes
+      const { data: existingSale } = await supabase
+        .from('sales')
+        .select('notes')
+        .eq('id', saleId)
+        .single();
+
+      const voidNote = `[VOIDED on ${new Date().toISOString()}] Reason: ${reason}`;
+      const updatedNotes = existingSale?.notes 
+        ? `${voidNote}\n\nOriginal notes: ${existingSale.notes}` 
+        : voidNote;
+
       const { data, error: updateError } = await supabase
         .from('sales')
         .update({
-          status: 'voided',
-          voided_at: new Date().toISOString(),
-          voided_by: user?.id,
-          void_reason: reason
+          notes: updatedNotes
         })
         .eq('id', saleId)
         .select()

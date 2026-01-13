@@ -133,9 +133,10 @@ export function UserManagement() {
 
     setUpdating(confirmChange.userId);
     try {
+      const dbRole = confirmChange.newRole === 'manager' ? 'staff' : confirmChange.newRole;
       const { error } = await supabase
         .from('profiles')
-        .update({ role: confirmChange.newRole })
+        .update({ role: dbRole as 'owner' | 'staff' })
         .eq('user_id', confirmChange.userId);
 
       if (error) throw error;
