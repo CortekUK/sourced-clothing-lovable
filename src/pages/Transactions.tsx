@@ -45,7 +45,6 @@ interface TransactionsFilters {
   paymentMethod: string;
   staffId: string;
   searchQuery: string;
-  status: 'all' | 'completed' | 'voided';
 }
 
 export default function Transactions() {
@@ -59,8 +58,7 @@ export default function Transactions() {
     dateRange: { from: '', to: '' },
     paymentMethod: 'all',
     staffId: 'all',
-    searchQuery: '',
-    status: 'all'
+    searchQuery: ''
   });
 
   const [expandedSales, setExpandedSales] = useState<Set<number>>(new Set());
@@ -123,7 +121,6 @@ export default function Transactions() {
                                (!toDate || saleDate <= toDate);
       const matchesPayment = !filters.paymentMethod || filters.paymentMethod === 'all' || transaction.payment === filters.paymentMethod;
       const matchesStaff = !filters.staffId || filters.staffId === 'all' || transaction.staff_id === filters.staffId;
-      const matchesStatus = filters.status === 'all' || (transaction.status || 'completed') === filters.status;
 
       // Search functionality - search by sale ID, customer email, or product names
       const matchesSearch = !filters.searchQuery ||
@@ -133,7 +130,7 @@ export default function Transactions() {
           item.products?.name?.toLowerCase().includes(filters.searchQuery.toLowerCase())
         ));
 
-      return matchesDateRange && matchesPayment && matchesStaff && matchesSearch && matchesStatus;
+      return matchesDateRange && matchesPayment && matchesStaff && matchesSearch;
     });
   }, [transactionsData, filters]);
 
@@ -265,7 +262,7 @@ export default function Transactions() {
       render: (value, row, index) => (
         <div className="flex items-center gap-2">
           <Badge variant="outline">#{row.id}</Badge>
-          {row.status === 'voided' && (
+          {row.notes?.includes('[VOIDED') && (
             <Badge variant="destructive" className="text-xs">
               <Ban className="h-3 w-3 mr-1" />
               VOID
@@ -562,22 +559,6 @@ export default function Transactions() {
                 </div>
               </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="status-filter">Status</Label>
-                <Select
-                  value={filters.status}
-                  onValueChange={(value: 'all' | 'completed' | 'voided') => setFilters(prev => ({ ...prev, status: value }))}
-                >
-                  <SelectTrigger id="status-filter" aria-label="Filter by status">
-                    <SelectValue placeholder="All statuses" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">All Statuses</SelectItem>
-                    <SelectItem value="completed">Completed</SelectItem>
-                    <SelectItem value="voided">Voided</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
             </div>
             
             <div className="flex flex-wrap gap-2">
@@ -588,8 +569,7 @@ export default function Transactions() {
                   dateRange: { from: new Date().toISOString().split('T')[0], to: new Date().toISOString().split('T')[0] },
                   paymentMethod: 'all',
                   staffId: 'all',
-                  searchQuery: '',
-                  status: 'all'
+                  searchQuery: ''
                 })}
                 aria-label="Show today's transactions"
               >
@@ -602,8 +582,7 @@ export default function Transactions() {
                   dateRange: { from: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0], to: new Date().toISOString().split('T')[0] },
                   paymentMethod: 'all',
                   staffId: 'all',
-                  searchQuery: '',
-                  status: 'all'
+                  searchQuery: ''
                 })}
                 aria-label="Show last 7 days transactions"
               >
@@ -616,8 +595,7 @@ export default function Transactions() {
                   dateRange: { from: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0], to: new Date().toISOString().split('T')[0] },
                   paymentMethod: 'all',
                   staffId: 'all',
-                  searchQuery: '',
-                  status: 'all'
+                  searchQuery: ''
                 })}
                 aria-label="Show last 30 days transactions"
               >

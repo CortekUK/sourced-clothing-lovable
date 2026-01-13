@@ -512,7 +512,7 @@ export function SaleDetailModal({ saleId, open, onClose, focusLineItemId }: Sale
             </Button>
             <div className="flex gap-2 flex-wrap">
               {/* Edit/Void buttons - Owner only, not for voided sales */}
-              {userRole === 'owner' && (sale as any).status !== 'voided' && (
+              {userRole === 'owner' && !sale.notes?.includes('[VOIDED') && (
                 <>
                   <Button
                     variant="outline"
