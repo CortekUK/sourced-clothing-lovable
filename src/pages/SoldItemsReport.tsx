@@ -138,8 +138,8 @@ export default function SoldItemsReport() {
     return soldItemsData.filter((item: any) => {
       if (!item || typeof item !== 'object') return false;
 
-      // Exclude voided sales from report
-      if (item?.sales?.status === 'voided') return false;
+      // Exclude voided sales from report (voided sales have notes starting with [VOIDED)
+      if (item?.sales?.notes?.includes('[VOIDED')) return false;
 
       // Exclude trade-in products from sold items report
       if (item?.products?.is_trade_in === true) return false;
@@ -413,7 +413,7 @@ export default function SoldItemsReport() {
     const tradeInCount = soldItemsData?.filter((item: any) => item?.products?.is_trade_in === true).length || 0;
 
     // Count how many voided items are excluded
-    const voidedCount = soldItemsData?.filter((item: any) => item?.sales?.status === 'voided').length || 0;
+    const voidedCount = soldItemsData?.filter((item: any) => item?.sales?.notes?.includes('[VOIDED')).length || 0;
 
     return filteredItems.reduce(
       (acc, item) => ({
