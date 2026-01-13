@@ -295,7 +295,6 @@ export function SaleDetailModal({ saleId, open, onClose, focusLineItemId }: Sale
                     <div className="flex-1 space-y-1">
                       <div className="flex items-center gap-2 flex-wrap">
                         <span className="font-medium">{product.name}</span>
-                        {product.is_trade_in && <TradeInBadge />}
                         {product.is_consignment && <ConsignmentBadge />}
                         {product.is_registered && (
                           <Badge variant="outline" className="border-purple-500/50 text-purple-700 dark:text-purple-400 bg-purple-50 dark:bg-purple-950/30">
@@ -383,72 +382,6 @@ export function SaleDetailModal({ saleId, open, onClose, focusLineItemId }: Sale
               })}
             </div>
 
-            {/* Part Exchanges */}
-            {partExchanges.length > 0 && (
-              <>
-                <Separator />
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between">
-                    <h3 className="font-semibold text-base">Part Exchanges</h3>
-                    <Button
-                      variant="link"
-                      size="sm"
-                      onClick={() => navigate('/part-exchange-intake')}
-                      className="text-xs h-auto p-0"
-                    >
-                      View Intake Queue →
-                    </Button>
-                  </div>
-                  {partExchanges.map((px) => {
-                    const statusBadge = () => {
-                      if (px.status === 'linked' && px.product_id) {
-                        return <Badge className="bg-success/10 text-success border-success/20">Converted</Badge>;
-                      }
-                      if (px.status === 'discarded') {
-                        return <Badge variant="outline" className="border-muted text-muted-foreground">Discarded</Badge>;
-                      }
-                      return <Badge variant="secondary" className="bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400">In Queue</Badge>;
-                    };
-                    
-                    return (
-                      <div key={px.id} className="flex items-start justify-between gap-4 p-3 bg-blue-50 dark:bg-blue-950/30 rounded-lg border border-blue-200 dark:border-blue-800">
-                        <div className="flex-1 space-y-1">
-                          <div className="flex items-center gap-2 flex-wrap">
-                            <span className="font-medium">{px.title || 'Part Exchange Item'}</span>
-                            <TradeInBadge />
-                            {statusBadge()}
-                          </div>
-                          {px.description && (
-                            <div className="text-xs text-muted-foreground">{px.description}</div>
-                          )}
-                          {px.serial && (
-                            <div className="text-xs text-muted-foreground font-mono">SKU: {px.serial}</div>
-                          )}
-                          {px.customer_name && (
-                            <div className="text-xs text-muted-foreground">From: {px.customer_name}</div>
-                          )}
-                          {px.status === 'linked' && px.product_id && (
-                            <Button
-                              variant="link"
-                              size="sm"
-                              className="h-auto p-0 text-xs"
-                              onClick={() => navigate(`/products?id=${px.product_id}`)}
-                            >
-                              <Eye className="h-3 w-3 mr-1" />
-                              View Product
-                            </Button>
-                          )}
-                        </div>
-                        <div className="text-right">
-                          <div className="font-medium font-mono text-destructive">-£{px.allowance.toFixed(2)}</div>
-                          <div className="text-xs text-muted-foreground">Allowance</div>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              </>
-            )}
 
             {/* Signature Display */}
             {(sale as any).signature_data && (

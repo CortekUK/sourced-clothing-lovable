@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { AppLayout } from '@/components/layout/AppLayout';
 import { ShoppingCartComponent } from '@/components/pos/ShoppingCart';
 import { CheckoutForm, DiscountType } from '@/components/pos/CheckoutForm';
@@ -6,22 +6,18 @@ import { SaleConfirmationModal } from '@/components/pos/SaleConfirmationModal';
 import { ProductSearch } from '@/components/pos/ProductSearch';
 import { useSettings } from '@/contexts/SettingsContext';
 import { useAuth } from '@/contexts/AuthContext';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import { formatCurrency } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
-import { useOwnerGuard } from '@/hooks/useOwnerGuard';
-import type { CartItem, Product, Sale, PartExchangeItem } from '@/types';
+import type { CartItem, Product } from '@/types';
 
 export default function EnhancedSales() {
   const { settings } = useSettings();
   const { user } = useAuth();
   const { toast } = useToast();
   const queryClient = useQueryClient();
-  const isOwner = useOwnerGuard();
   
   const [cart, setCart] = useState<CartItem[]>([]);
-  const [partExchanges, setPartExchanges] = useState<PartExchangeItem[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [customerName, setCustomerName] = useState('');
   const [customerEmail, setCustomerEmail] = useState('');
@@ -31,38 +27,8 @@ export default function EnhancedSales() {
   const [notes, setNotes] = useState('');
   const [signature, setSignature] = useState<string | null>(null);
   const [staffMember, setStaffMember] = useState('');
-  const [showPartExchangeModal, setShowPartExchangeModal] = useState(false);
   const [showConfirmationModal, setShowConfirmationModal] = useState(false);
-  const [completedSale, setCompletedSale] = useState<{ sale: any; items: any[]; partExchanges: any[]; signature: string | null } | null>(null);
-
-  // Fetch products
-  const { data: products, isLoading: productsLoading } = useQuery({
-    queryKey: ['products'],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from('products')
-        .select('*')
-        .order('name');
-      
-      if (error) throw error;
-      return data as Product[];
-    }
-  });
-
-  // Get Customer Trade-In supplier ID
-  const { data: tradeInSupplier } = useQuery({
-    queryKey: ['trade-in-supplier'],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from('suppliers')
-        .select('id')
-        .eq('name', 'Customer Trade-In')
-        .single();
-      
-      if (error) throw error;
-      return data;
-    }
-  });
+  const [completedSale, setCompletedSale] = useState<{ sale: any; items: any[]; signature: string | null } | null>(null);
 
   // Calculate totals
   const subtotal = cart.reduce((sum, item) => sum + (item.unit_price * item.quantity), 0);
@@ -78,21 +44,6 @@ export default function EnhancedSales() {
     return sum + (itemAfterDiscount * (item.product.tax_rate / 100));
   }, 0);
   const total = subtotal - discountAmount + taxAmount;
-  const partExchangeTotal = partExchanges.reduce((sum, px) => sum + px.allowance, 0);
-  const netTotal = total - partExchangeTotal;
-
-  // Part Exchange handlers
-  const addPartExchange = (partExchange: PartExchangeItem) => {
-    setPartExchanges([...partExchanges, partExchange]);
-    toast({
-      title: 'Part exchange added',
-      description: `${partExchange.product_name} trade-in for ${formatCurrency(partExchange.allowance)}`,
-    });
-  };
-
-  const removePartExchange = (id: string) => {
-    setPartExchanges(partExchanges.filter(px => px.id !== id));
-  };
 
   const addToCart = (product: Product) => {
     const existingItem = cart.find(item => item.product.id === product.id);
@@ -138,12 +89,10 @@ export default function EnhancedSales() {
     setCart(cart.filter(item => item.product.id !== productId));
   };
 
-  // Remove serial assignment functionality - simplified model
-
-  // Complete sale mutation with part exchanges
+  // Complete sale mutation
   const completeSaleMutation = useMutation({
     mutationFn: async () => {
-      // Validate stock availability before sale (frontend check - DB trigger is backup)
+      // Validate stock availability before sale
       if (cart.length > 0) {
         const { data: stockData, error: stockError } = await supabase
           .from('v_stock_on_hand')
@@ -172,7 +121,6 @@ export default function EnhancedSales() {
         tax_total: taxAmount,
         discount_total: discountAmount,
         total,
-        part_exchange_total: partExchangeTotal,
         notes: notes || null,
         customer_name: customerName || null,
         customer_email: customerEmail || null,
@@ -225,35 +173,10 @@ export default function EnhancedSales() {
         }
       }
 
-      // Store part exchanges as pending (don't create products yet)
-      if (partExchanges.length > 0) {
-        const pxRecords = partExchanges.map(px => ({
-          sale_id: sale.id,
-          title: px.product_name,
-          category: px.category || null,
-          description: px.description || null,
-          serial: px.serial || null,
-          allowance: px.allowance,
-          customer_name: px.customer_name || null,
-          customer_contact: px.customer_contact || null,
-          customer_supplier_id: px.supplier_id || null,
-          notes: px.notes || null,
-          status: 'pending',
-          product_id: null
-        }));
-
-        const { error: pxError } = await supabase
-          .from('part_exchanges')
-          .insert(pxRecords);
-
-        if (pxError) throw pxError;
-      }
-
-      return { sale, items: cart, partExchanges, signature };
+      return { sale, items: cart, signature };
     },
-    onSuccess: ({ sale, items, partExchanges: pxItems, signature: sig }) => {
+    onSuccess: ({ sale, items, signature: sig }) => {
       queryClient.invalidateQueries({ queryKey: ['products'] });
-      queryClient.invalidateQueries({ queryKey: ['part-exchanges'] });
       queryClient.invalidateQueries({ queryKey: ['consignment-settlements'] });
       queryClient.invalidateQueries({ queryKey: ['consignment-products'] });
       
@@ -265,13 +188,11 @@ export default function EnhancedSales() {
           quantity: item.quantity,
           unit_price: item.unit_price
         })), 
-        partExchanges: pxItems,
         signature: sig
       });
 
       // Reset form
       setCart([]);
-      setPartExchanges([]);
       setCustomerName('');
       setCustomerEmail('');
       setDiscount(0);
@@ -295,7 +216,7 @@ export default function EnhancedSales() {
   return (
     <AppLayout 
       title="Point of Sale"
-      subtitle="Process sales transactions with part exchange support"
+      subtitle="Process sales transactions"
     >
       <div className="space-y-6">
         <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
@@ -311,11 +232,8 @@ export default function EnhancedSales() {
           <div className="xl:col-span-1">
             <ShoppingCartComponent
               items={cart}
-              partExchanges={partExchanges}
               onUpdateQuantity={updateQuantity}
               onRemoveItem={removeFromCart}
-              onRemovePartExchange={removePartExchange}
-              onAddPartExchange={() => setShowPartExchangeModal(true)}
               discount={discount}
               discountType={discountType}
             />
@@ -325,7 +243,7 @@ export default function EnhancedSales() {
           <div className="xl:col-span-1">
             <CheckoutForm
               items={cart}
-              partExchanges={partExchanges}
+              partExchanges={[]}
               discount={discount}
               discountType={discountType}
               onDiscountChange={setDiscount}
@@ -340,7 +258,7 @@ export default function EnhancedSales() {
               onPaymentMethodChange={setPaymentMethod}
               onCompleteSale={() => completeSaleMutation.mutate()}
               isProcessing={completeSaleMutation.isPending}
-              requiresOwnerApproval={netTotal < 0 && !isOwner}
+              requiresOwnerApproval={false}
               signature={signature}
               onSignatureChange={setSignature}
               staffMember={staffMember}
@@ -351,12 +269,6 @@ export default function EnhancedSales() {
         </div>
 
         {/* Modals */}
-        <PartExchangeModal
-          isOpen={showPartExchangeModal}
-          onClose={() => setShowPartExchangeModal(false)}
-          onAdd={addPartExchange}
-        />
-
         {completedSale && (
           <SaleConfirmationModal
             isOpen={showConfirmationModal}
@@ -366,11 +278,11 @@ export default function EnhancedSales() {
             }}
             sale={completedSale.sale}
             items={completedSale.items}
-            partExchanges={completedSale.partExchanges}
+            partExchanges={[]}
             signature={completedSale.signature}
-            onPrint={() => {}} // Modal handles this internally
-            onEmailReceipt={customerEmail ? () => {} : undefined} // Modal handles this internally
-            onDownloadPDF={() => {}} // Modal handles this internally
+            onPrint={() => {}}
+            onEmailReceipt={customerEmail ? () => {} : undefined}
+            onDownloadPDF={() => {}}
           />
         )}
       </div>

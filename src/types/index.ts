@@ -18,7 +18,6 @@ export type Expense = Database['public']['Tables']['expenses']['Row'];
 export type StockMovement = Database['public']['Tables']['stock_movements']['Row'];
 export type Profile = Database['public']['Tables']['profiles']['Row'];
 export type ConsignmentSettlement = Database['public']['Tables']['consignment_settlements']['Row'];
-export type PartExchange = Database['public']['Tables']['part_exchanges']['Row'];
 export type Location = Database['public']['Tables']['locations']['Row'];
 
 // View Types
@@ -37,7 +36,6 @@ export type SaleItemInsert = Database['public']['Tables']['sale_items']['Insert'
 export type ExpenseInsert = Database['public']['Tables']['expenses']['Insert'];
 export type StockMovementInsert = Database['public']['Tables']['stock_movements']['Insert'];
 export type ConsignmentSettlementInsert = Database['public']['Tables']['consignment_settlements']['Insert'];
-export type PartExchangeInsert = Database['public']['Tables']['part_exchanges']['Insert'];
 export type LocationInsert = Database['public']['Tables']['locations']['Insert'];
 
 // Update Types
@@ -45,7 +43,6 @@ export type ProductUpdate = Database['public']['Tables']['products']['Update'];
 export type SupplierUpdate = Database['public']['Tables']['suppliers']['Update'];
 export type ExpenseUpdate = Database['public']['Tables']['expenses']['Update'];
 export type ConsignmentSettlementUpdate = Database['public']['Tables']['consignment_settlements']['Update'];
-export type PartExchangeUpdate = Database['public']['Tables']['part_exchanges']['Update'];
 export type LocationUpdate = Database['public']['Tables']['locations']['Update'];
 
 // Enhanced Product with Stock and Supplier Info
@@ -63,7 +60,6 @@ export interface ProductWithStock extends Product {
 export interface SaleWithItems extends Sale {
   sale_items?: (SaleItem & { product?: Product })[];
   staff?: Profile | null;
-  part_exchanges?: (PartExchange & { product?: Product })[];
 }
 
 // Enhanced Expense with Supplier and Staff
@@ -82,20 +78,6 @@ export interface CartItem {
   discount: number;
 }
 
-// Part Exchange Types for POS
-export interface PartExchangeItem {
-  id: string; // temporary ID for cart management
-  product_name: string;
-  category?: string;
-  description?: string;
-  serial?: string;
-  allowance: number;
-  notes?: string;
-  customer_name?: string;
-  customer_contact?: string;
-  supplier_id?: number; // Link to customer supplier
-}
-
 // For creating sale items without sale_id (added in mutation)
 export interface SaleItemCreate {
   product_id: number;
@@ -112,8 +94,6 @@ export interface CartSummary {
   discount_total: number;
   total: number;
   item_count: number;
-  part_exchange_total: number;
-  net_total: number; // total minus part exchanges
 }
 
 // Stock Adjustment
