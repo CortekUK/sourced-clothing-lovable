@@ -1,6 +1,6 @@
 import { Card, CardContent } from '@/components/ui/card';
 import { Package, AlertCircle, DollarSign } from 'lucide-react';
-import { useSupplierConsignments } from '@/hooks/useSupplierTradeInsConsignments';
+import { useSupplierConsignments } from '@/hooks/useSupplierConsignments';
 
 interface ConsignmentSummaryCardsProps {
   supplierId: number;

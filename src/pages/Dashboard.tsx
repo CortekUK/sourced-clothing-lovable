@@ -15,8 +15,6 @@ import { format } from 'date-fns';
 import { useState } from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { useStockStatus } from '@/hooks/useStockStatus';
-import { usePendingPartExchangesStats } from '@/hooks/usePartExchanges';
-import { PendingTradeInsCard } from '@/components/dashboard/PendingTradeInsCard';
 import { PurchasingSnapshotCards } from '@/components/dashboard/PurchasingSnapshotCards';
 import { QuickActionsBar } from '@/components/dashboard/QuickActionsBar';
 
@@ -630,11 +628,12 @@ export default function Dashboard() {
         <PurchasingSnapshotCards />
       </div>
 
-      {/* Weekly Expenses (owner only) & Pending Trade-Ins */}
-      <div className={`grid gap-4 sm:gap-6 md:gap-8 grid-cols-1 ${isOwner ? 'lg:grid-cols-2' : ''} mb-6 md:mb-8`}>
-        {isOwner && <WeeklyExpensesCard />}
-        <PendingTradeInsCard />
-      </div>
+      {/* Weekly Expenses (owner only) */}
+      {isOwner && (
+        <div className="mb-6 md:mb-8">
+          <WeeklyExpensesCard />
+        </div>
+      )}
       
       {/* Staff Activity if multi-staff */}
       <div className="mb-6 md:mb-8">

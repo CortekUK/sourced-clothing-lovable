@@ -29,7 +29,7 @@ import Expenses from "./pages/Expenses";
 import Reports from "./pages/Reports";
 import EnhancedAnalytics from "./pages/EnhancedAnalytics";
 import Consignments from "./pages/Consignments";
-import PartExchangeIntake from "./pages/PartExchangeIntake";
+
 import Settings from "./pages/Settings";
 import Auth from "./pages/Auth";
 import Receipt from "./pages/Receipt";
@@ -67,7 +67,7 @@ function AppInner() {
           {/* Protected Routes */}
           <Route path="/" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
           <Route path="/products" element={<ProtectedRoute><Products /></ProtectedRoute>} />
-          <Route path="/products/intake" element={<ProtectedRoute><PartExchangeIntake /></ProtectedRoute>} />
+          
           <Route path="/suppliers" element={<ProtectedRoute><Suppliers /></ProtectedRoute>} />
           <Route path="/suppliers/:id" element={<ProtectedRoute><SupplierDetail /></ProtectedRoute>} />
           <Route path="/consignments" element={<ProtectedRoute><Consignments /></ProtectedRoute>} />

@@ -16,7 +16,7 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { format } from 'date-fns';
 import { QuickSettlementModal } from '@/components/consignments/QuickSettlementModal';
 import { ConsignmentBadge } from '@/components/ui/consignment-badge';
-import { TradeInBadge } from '@/components/ui/trade-in-badge';
+
 import { buildReceiptHtml } from '@/utils/receiptHtmlBuilder';
 import { printHtml } from '@/utils/printUtils';
 import { EmailService } from '@/components/integrations/EmailService';

@@ -11,13 +11,11 @@ import { ConsignmentAgreementSection } from '@/components/consignments/Consignme
 import { StockAdjustmentModal } from '@/components/products/StockAdjustmentModal';
 import { ImageModal } from '@/components/ui/image-modal';
 import { ProductDocumentsTab } from '@/components/documents/ProductDocumentsTab';
-import { PartExchangeInfoTab } from '@/components/products/PartExchangeInfoTab';
+
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useOwnerGuard } from '@/hooks/useOwnerGuard';
 import { useToast } from '@/hooks/use-toast';
-import { useProductTradeInStatus } from '@/hooks/useProductTradeInStatus';
-import { usePartExchangesByProduct } from '@/hooks/usePartExchanges';
 import { useKeyboardShortcuts } from '@/hooks/useKeyboardShortcuts';
 import { getSupplierDisplayName, getCleanedDescription, formatCurrency } from '@/lib/utils';
 

@@ -19,7 +19,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from '@/components/ui/dialog';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { ArrowLeft, Edit, Mail, Phone, MapPin, Tag, Package, TrendingUp, Calendar, FileText, Upload, Download, Trash2, Eye, ExternalLink, Loader2, Building2, User, Repeat, FileDown } from 'lucide-react';
+import { ArrowLeft, Edit, Mail, Phone, MapPin, Tag, Package, TrendingUp, Calendar, FileText, Upload, Download, Trash2, Eye, ExternalLink, Loader2, Building2, User, FileDown } from 'lucide-react';
 import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { SupplierKPICards } from '@/components/suppliers/SupplierKPICards';
 import { SourceSummaryCard } from '@/components/suppliers/SourceSummaryCard';
@@ -30,9 +30,8 @@ import { exportSupplierFinancialCSV } from '@/utils/supplierExport';
 import { SupplierDocumentsTab } from '@/components/suppliers/SupplierDocumentsTab';
 import { ConsignmentSummaryCards } from '@/components/suppliers/ConsignmentSummaryCards';
 import { SupplierConsignmentTabs } from '@/components/suppliers/SupplierConsignmentTabs';
-import { useSupplierConsignments } from '@/hooks/useSupplierTradeInsConsignments';
+import { useSupplierConsignments } from '@/hooks/useSupplierConsignments';
 import { EditSupplierDialog } from '@/components/suppliers/EditSupplierDialog';
-import { CustomerPXHistoryTab } from '@/components/suppliers/CustomerPXHistoryTab';
 
 export default function SupplierDetail() {
   const { id } = useParams<{ id: string }>();
@@ -137,16 +136,6 @@ export default function SupplierDetail() {
             
             {/* Buttons Group */}
             <div className="flex items-center gap-2">
-              {supplier.supplier_type === 'customer' && (
-                <Button 
-                  onClick={() => setActiveTab('px-history')} 
-                  variant="outline" 
-                  size="sm"
-                >
-                  <Repeat className="h-4 w-4 mr-2" />
-                  Part-Exchange History
-                </Button>
-              )}
               {isOwner && (
                 <Button variant="outline" size="sm" onClick={() => setEditDialogOpen(true)}>
                   <Edit className="h-4 w-4 mr-2" />
@@ -171,14 +160,11 @@ export default function SupplierDetail() {
         {/* Main Content Tabs */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
           <TabsList className={`grid w-full ${
-            isCustomer && hasConsignments ? 'grid-cols-6' : 
-            isCustomer || hasConsignments ? 'grid-cols-5' : 
-            'grid-cols-4'
+            hasConsignments ? 'grid-cols-5' : 'grid-cols-4'
           }`}>
             <TabsTrigger value="overview">Overview</TabsTrigger>
             <TabsTrigger value="inventory">Inventory</TabsTrigger>
             <TabsTrigger value="financials">Financials</TabsTrigger>
-            {isCustomer && <TabsTrigger value="px-history">PX History</TabsTrigger>}
             {hasConsignments && <TabsTrigger value="consignments">Consignments</TabsTrigger>}
             <TabsTrigger value="documents">Documents</TabsTrigger>
           </TabsList>
@@ -544,12 +530,6 @@ export default function SupplierDetail() {
             </TabsContent>
           )}
 
-          {/* PX History Tab (Customer Suppliers Only) */}
-          {isCustomer && (
-            <TabsContent value="px-history">
-              <CustomerPXHistoryTab supplierId={supplierId} />
-            </TabsContent>
-          )}
 
           {/* Documents Tab */}
           <TabsContent value="documents">
