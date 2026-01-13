@@ -154,7 +154,7 @@ export default function Auth() {
           <div className="flex justify-center">
             <Logo variant="login" size="sm" />
           </div>
-          <div className="pt-6">
+          <div className="pt-10">
             <CardTitle className="text-2xl font-luxury">
               Welcome Back
             </CardTitle>
