@@ -15,7 +15,7 @@ export function QuickActionsBar() {
     {
       label: 'Add Product',
       icon: Plus,
-      onClick: () => navigate('/products/add'),
+      onClick: () => navigate('/products?action=add'),
       variant: 'outline' as const,
     },
     {
