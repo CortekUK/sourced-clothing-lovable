@@ -150,8 +150,8 @@ export default function Auth() {
         <ThemeToggle />
       </div>
       <DynamicBorderCard className="w-full max-w-[440px]">
-        <CardHeader className="text-center space-y-3 pt-5 pb-4 px-6 md:px-8">
-          <div className="flex justify-center">
+        <CardHeader className="text-center space-y-1 pt-5 pb-4 px-6 md:px-8">
+          <div className="flex justify-center mb-2">
             <Logo variant="login" size="sm" />
           </div>
           <div>

@@ -25,11 +25,12 @@ export function Logo({ variant = "full", size = "md", className }: LogoProps) {
 
   // Use the new logo
   const logoSrc = "/auth-logo.png";
+  const loginLogoSrc = "/sourced-new.png";
 
   if (variant === "login") {
     return (
       <img
-        src={logoSrc}
+        src={loginLogoSrc}
         alt="Sourced Clothing"
         className={cn("login-logo", className)}
         loading="eager"
