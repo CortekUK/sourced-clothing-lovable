@@ -1,6 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
 import { formatCurrency, calculateCartTotals } from '@/lib/utils';
 import type { CartItem } from '@/types';
 import { ConsignmentBadge } from '@/components/ui/consignment-badge';
@@ -8,8 +7,7 @@ import {
   ShoppingCart, 
   Plus,
   Minus,
-  Trash2,
-  Package
+  Trash2
 } from 'lucide-react';
 
 export type DiscountType = 'percentage' | 'fixed';
@@ -24,14 +22,10 @@ interface ShoppingCartProps {
 
 export function ShoppingCartComponent({ 
   items,
-  partExchanges,
   onUpdateQuantity, 
   onRemoveItem,
-  onRemovePartExchange,
-  onAddPartExchange,
   discount,
-  discountType,
-  onSerialAssignment 
+  discountType
 }: ShoppingCartProps) {
   // Calculate discount based on type
   const calculateItemDiscount = (lineTotal: number) => {
@@ -54,9 +48,6 @@ export function ShoppingCartComponent({
     };
   }));
 
-  const partExchangeTotal = partExchanges.reduce((sum, px) => sum + px.allowance, 0);
-  const netTotal = totals.total - partExchangeTotal;
-
   return (
     <Card className="shadow-card">
       <CardHeader>
@@ -66,7 +57,7 @@ export function ShoppingCartComponent({
         </CardTitle>
       </CardHeader>
       <CardContent>
-        {items.length === 0 && partExchanges.length === 0 ? (
+        {items.length === 0 ? (
           <div className="text-center py-12">
             <ShoppingCart className="h-16 w-16 text-muted-foreground mx-auto mb-4 opacity-40" />
             <p className="font-medium text-muted-foreground">Cart is empty</p>
@@ -139,43 +130,9 @@ export function ShoppingCartComponent({
                       <Trash2 className="h-3 w-3" />
                     </Button>
                   </div>
-
                 </div>
               );
             })}
-
-            {/* Part Exchange Section */}
-            {partExchanges.length > 0 && (
-              <div className="pt-3 border-t">
-                <div className="flex items-center gap-2 mb-3">
-                  <Badge className="bg-amber-100 text-amber-800 border-amber-200 dark:bg-amber-950 dark:text-amber-300 dark:border-amber-800">
-                    Trade-In
-                  </Badge>
-                  <span className="text-sm text-muted-foreground">{partExchanges.length} items</span>
-                </div>
-                <div className="space-y-2">
-                  {partExchanges.map(px => (
-                    <PartExchangeItemComponent
-                      key={px.id}
-                      item={px}
-                      onRemove={() => onRemovePartExchange(px.id)}
-                    />
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Add Part Exchange Button */}
-            <div className="pt-2">
-              <Button
-                variant="outline"
-                onClick={onAddPartExchange}
-                className="w-full border-amber-200 text-amber-700 hover:bg-amber-50 dark:border-amber-800 dark:text-amber-400 dark:hover:bg-amber-950/20"
-              >
-                <Repeat className="h-4 w-4 mr-2" />
-                Add Part Exchange
-              </Button>
-            </div>
             
             {/* Cart Summary */}
             <div className="pt-3 border-t space-y-2">
@@ -198,15 +155,9 @@ export function ShoppingCartComponent({
                   <span className="text-[#D4AF37] font-medium">{formatCurrency(totals.tax_total)}</span>
                 </div>
               )}
-              {partExchangeTotal > 0 && (
-                <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">Trade-In Allowance:</span>
-                  <span className="text-green-600 font-medium">-{formatCurrency(partExchangeTotal)}</span>
-                </div>
-              )}
-              <div className={`flex justify-between font-bold text-base pt-2 border-t ${netTotal < 0 ? 'text-red-600' : 'text-[#D4AF37]'}`}>
-                <span>{netTotal < 0 ? 'Owed to Customer:' : 'Net Total:'}</span>
-                <span>{formatCurrency(Math.abs(netTotal))}</span>
+              <div className="flex justify-between font-bold text-base pt-2 border-t text-[#D4AF37]">
+                <span>Total:</span>
+                <span>{formatCurrency(totals.total)}</span>
               </div>
             </div>
           </div>

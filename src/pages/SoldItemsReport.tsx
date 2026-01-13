@@ -46,7 +46,6 @@ interface SoldItemsFilters {
   supplierId: string;
   flags: {
     consignment: boolean;
-    partExchange: boolean;
     registered: boolean;
   };
   saleId?: string;
@@ -73,7 +72,6 @@ export default function SoldItemsReport() {
     supplierId: 'all',
     flags: {
       consignment: false,
-      partExchange: false,
       registered: false
     },
     saleId: searchParams.get('sale') || undefined
@@ -179,10 +177,9 @@ export default function SoldItemsReport() {
       const matchesSale = !filters.saleId || filters.saleId === '' || item.sale_id?.toString() === filters.saleId;
       
       // Flags filter
-      const hasActiveFlags = filters.flags.consignment || filters.flags.partExchange || filters.flags.registered;
+      const hasActiveFlags = filters.flags.consignment || filters.flags.registered;
       const matchesFlags = !hasActiveFlags || (
         (!filters.flags.consignment || item?.products?.is_consignment) &&
-        (!filters.flags.partExchange || item?.products?.is_trade_in) &&
         (!filters.flags.registered || item?.products?.is_registered)
       );
       
@@ -266,7 +263,6 @@ export default function SoldItemsReport() {
           </div>
           <div className="flex gap-1 mt-1.5 flex-wrap">
             {row?.products?.is_consignment && <ConsignmentBadge className="text-xs" />}
-            {row?.products?.is_trade_in && <TradeInBadge className="text-xs" />}
             {row?.products?.is_registered && (
               <Badge variant="outline" className="text-xs bg-green-500/10 text-green-700 dark:text-green-400 border-green-500/20">
                 Reg
@@ -727,20 +723,6 @@ export default function SoldItemsReport() {
                 </Button>
                 
                 <Button
-                  variant={filters.flags.partExchange ? "default" : "outline"}
-                  size="sm"
-                  onClick={() => setFilters(prev => ({
-                    ...prev,
-                    flags: { ...prev.flags, partExchange: !prev.flags.partExchange }
-                  }))}
-                  className="h-8"
-                >
-                  <TradeInBadge className="text-xs mr-1" />
-                  Part Exchange
-                  {filters.flags.partExchange && <X className="ml-1 h-3 w-3" />}
-                </Button>
-                
-                <Button
                   variant={filters.flags.registered ? "default" : "outline"}
                   size="sm"
                   onClick={() => setFilters(prev => ({
@@ -768,7 +750,7 @@ export default function SoldItemsReport() {
                   fabric: 'all',
                   staffId: 'all',
                   supplierId: 'all',
-                  flags: { consignment: false, partExchange: false, registered: false }
+                  flags: { consignment: false, registered: false }
                 })}
               >
                 Today
@@ -782,7 +764,7 @@ export default function SoldItemsReport() {
                   fabric: 'all',
                   staffId: 'all',
                   supplierId: 'all',
-                  flags: { consignment: false, partExchange: false, registered: false }
+                  flags: { consignment: false, registered: false }
                 })}
               >
                 7 Days
@@ -796,7 +778,7 @@ export default function SoldItemsReport() {
                   fabric: 'all',
                   staffId: 'all',
                   supplierId: 'all',
-                  flags: { consignment: false, partExchange: false, registered: false }
+                  flags: { consignment: false, registered: false }
                 })}
               >
                 30 Days

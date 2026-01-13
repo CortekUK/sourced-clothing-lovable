@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { Product } from '@/types';
-import { Package, PoundSterling, TrendingUp, Calendar, Truck, Tag, Gem, Award, FileText, Eye, Download, Repeat, User, Phone, Copy, ExternalLink, MapPin } from 'lucide-react';
+import { Package, PoundSterling, TrendingUp, Calendar, Truck, Tag, Gem, Award, FileText, Eye, Download, User, Phone, Copy, ExternalLink, MapPin } from 'lucide-react';
 import { format } from 'date-fns';
 import { ConsignmentAgreementSection } from '@/components/consignments/ConsignmentAgreementSection';
 import { StockAdjustmentModal } from '@/components/products/StockAdjustmentModal';
@@ -17,7 +17,7 @@ import { useNavigate } from 'react-router-dom';
 import { useOwnerGuard } from '@/hooks/useOwnerGuard';
 import { useToast } from '@/hooks/use-toast';
 import { useKeyboardShortcuts } from '@/hooks/useKeyboardShortcuts';
-import { getSupplierDisplayName, getCleanedDescription, formatCurrency } from '@/lib/utils';
+import { formatCurrency } from '@/lib/utils';
 
 interface ProductDetailModalProps {
   product: Product | null;
@@ -38,10 +38,6 @@ export function ProductDetailModal({ product, open, onOpenChange, onEditClick, o
   const navigate = useNavigate();
   const isOwner = useOwnerGuard();
   const { toast } = useToast();
-
-  // Check product type status
-  const { data: isTradeIn } = useProductTradeInStatus(product?.id || 0);
-  const { data: partExchange } = usePartExchangesByProduct(product?.id || 0);
 
   // Keyboard shortcut for duplicate (Cmd/Ctrl + D)
   useKeyboardShortcuts([
@@ -151,12 +147,6 @@ export function ProductDetailModal({ product, open, onOpenChange, onEditClick, o
                       <Badge variant="outline" className="border-amber-500 text-amber-700 bg-amber-50 dark:bg-amber-900/20 font-medium">
                         <FileText className="h-3 w-3 mr-1" />
                         Consignment
-                      </Badge>
-                    )}
-                    {isTradeIn && (
-                      <Badge variant="outline" className="border-blue-500 text-blue-700 bg-blue-50 dark:bg-blue-900/20 font-medium">
-                        <Repeat className="h-3 w-3 mr-1" />
-                        Part Exchange
                       </Badge>
                     )}
                   </div>
@@ -293,7 +283,7 @@ export function ProductDetailModal({ product, open, onOpenChange, onEditClick, o
           )}
 
           {/* Ownership Source Section */}
-          {((product as any).is_consignment || isTradeIn || getSupplierDisplayName(product) !== 'Unknown Supplier') && (
+          {((product as any).is_consignment || (product as any).supplier) && (
             <Card className="shadow-sm mb-6">
               <CardHeader>
                 <CardTitle className="font-luxury text-lg text-foreground">
@@ -302,9 +292,7 @@ export function ProductDetailModal({ product, open, onOpenChange, onEditClick, o
                 <CardDescription className="font-sans">
                   {(product as any).is_consignment 
                     ? "Consignment product details"
-                    : isTradeIn 
-                      ? "Part exchange customer information"
-                      : "Supplier information"
+                    : "Supplier information"
                   }
                 </CardDescription>
               </CardHeader>
@@ -342,71 +330,11 @@ export function ProductDetailModal({ product, open, onOpenChange, onEditClick, o
                       </div>
                     )}
                   </div>
-                ) : isTradeIn && partExchange ? (
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="space-y-3">
-                      <h4 className="font-medium flex items-center gap-2 font-sans">
-                        <User className="h-4 w-4" />
-                        Customer Details
-                      </h4>
-                      <div className="space-y-2 pl-6">
-                        <div className="flex justify-between">
-                          <span className="text-muted-foreground font-sans">Name:</span>
-                          <span className="font-medium">
-                            {partExchange.customer_name || 'Not recorded'}
-                          </span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span className="text-muted-foreground font-sans">Contact:</span>
-                          <span className="font-medium font-mono">
-                            {partExchange.customer_contact || 'Not recorded'}
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="space-y-3">
-                      <h4 className="font-medium flex items-center gap-2 font-sans">
-                        <PoundSterling className="h-4 w-4" />
-                        Trade-In Details
-                      </h4>
-                      <div className="space-y-2 pl-6">
-                        <div className="flex justify-between">
-                          <span className="text-muted-foreground font-sans">Allowance:</span>
-                          <span className="font-medium text-success">
-                            {formatCurrency(Number(partExchange.allowance))}
-                          </span>
-                        </div>
-                        {partExchange.sale?.sold_at && (
-                          <div className="flex justify-between">
-                            <span className="text-muted-foreground font-sans">Date:</span>
-                            <span className="font-medium">
-                              {new Date(partExchange.sale.sold_at).toLocaleDateString('en-GB')}
-                            </span>
-                          </div>
-                        )}
-                        {partExchange.sale_id && (
-                          <Button
-                            variant="link"
-                            size="sm"
-                            className="h-auto p-0 text-xs mt-2"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              navigate(`/sales/${partExchange.sale_id}`);
-                              onOpenChange(false);
-                            }}
-                          >
-                            <Eye className="h-3 w-3 mr-1" />
-                            View Original Sale
-                          </Button>
-                        )}
-                      </div>
-                    </div>
-                  </div>
                 ) : (
                   <div className="flex justify-between items-center">
                     <span className="text-muted-foreground font-sans">Supplier:</span>
                     <span className="font-medium">
-                      {getSupplierDisplayName(product)}
+                      {(product as any).supplier?.name || 'Unknown Supplier'}
                     </span>
                   </div>
                 )}
@@ -503,10 +431,10 @@ export function ProductDetailModal({ product, open, onOpenChange, onEditClick, o
                     </div>
                   )}
                 </div>
-                {getCleanedDescription(product.description) && (
+                {product.description && (
                   <div className="mt-4 pt-4 border-t">
                     <span className="text-muted-foreground font-sans">Description:</span>
-                    <p className="mt-1 text-sm font-sans">{getCleanedDescription(product.description)}</p>
+                    <p className="mt-1 text-sm font-sans">{product.description}</p>
                   </div>
                 )}
               </AccordionContent>
@@ -565,20 +493,6 @@ export function ProductDetailModal({ product, open, onOpenChange, onEditClick, o
                     </div>
                   )}
 
-                  {/* Trade-in Notes - if applicable */}
-                  {isTradeIn && partExchange?.notes && (
-                    <Card className="mt-6 border-blue-200 bg-blue-50/50 dark:bg-blue-900/20">
-                      <CardHeader>
-                        <CardTitle className="flex items-center gap-2 text-base text-blue-800 dark:text-blue-200">
-                          <Repeat className="h-4 w-4" />
-                          Trade-In Notes
-                        </CardTitle>
-                      </CardHeader>
-                      <CardContent>
-                        <p className="text-sm font-sans">{partExchange.notes}</p>
-                      </CardContent>
-                    </Card>
-                  )}
                 </div>
               </AccordionContent>
             </AccordionItem>

@@ -9,13 +9,13 @@ import { CurrencyInput } from '@/components/ui/currency-input';
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { formatCurrency, calculateCartTotals } from '@/lib/utils';
-import type { CartItem, PaymentMethod, PartExchangeItem } from '@/types';
+import type { CartItem, PaymentMethod } from '@/types';
 import { Calculator, CreditCard, Banknote, Smartphone, Building, Loader2, Percent, PoundSterling, PenTool, ChevronDown } from 'lucide-react';
 import { SignaturePad, SignaturePadRef } from './SignaturePad';
 export type DiscountType = 'percentage' | 'fixed';
 interface CheckoutFormProps {
   items: CartItem[];
-  partExchanges: PartExchangeItem[];
+  partExchanges: any[];
   discount: number;
   discountType: DiscountType;
   onDiscountChange: (discount: number) => void;

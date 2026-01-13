@@ -5,7 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { formatCurrency, formatDateTime } from '@/lib/utils';
 import { CheckCircle2, Printer, Mail, Download, ShoppingCart, ExternalLink, Eye } from 'lucide-react';
-import type { Sale, SaleItem, Product, PartExchangeItem } from '@/types';
+import type { Sale, Product } from '@/types';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
 import { SaleDetailModal } from '@/components/transactions/SaleDetailModal';
@@ -16,7 +16,7 @@ interface SaleConfirmationModalProps {
   onClose: () => void;
   sale: Sale;
   items: Array<{ product: Product; quantity: number; unit_price: number }>;
-  partExchanges: PartExchangeItem[];
+  partExchanges: any[];
   signature?: string | null;
   onPrint: () => void;
   onEmailReceipt?: () => void;
