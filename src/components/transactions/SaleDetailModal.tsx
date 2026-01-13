@@ -207,7 +207,7 @@ export function SaleDetailModal({ saleId, open, onClose, focusLineItemId }: Sale
           <DialogHeader>
             <DialogTitle className="text-2xl font-luxury flex items-center gap-3">
               Sale #{saleId}
-              {(sale as any).status === 'voided' && (
+              {sale.notes?.includes('[VOIDED') && (
                 <Badge variant="destructive" className="text-sm">
                   <Ban className="h-3 w-3 mr-1" />
                   VOIDED
@@ -237,19 +237,12 @@ export function SaleDetailModal({ saleId, open, onClose, focusLineItemId }: Sale
               Processed by: {(sale as any).staff_member_name || sale.profiles?.full_name || 'Unknown'}
             </div>
             {/* Void Info */}
-            {(sale as any).status === 'voided' && (
+            {sale.notes?.includes('[VOIDED') && (
               <div className="mt-3 p-3 bg-destructive/10 border border-destructive/20 rounded-lg">
                 <div className="text-sm font-medium text-destructive">Sale Voided</div>
-                {(sale as any).voided_at && (
-                  <div className="text-xs text-muted-foreground mt-1">
-                    Voided on: {format(new Date((sale as any).voided_at), 'PPpp')}
-                  </div>
-                )}
-                {(sale as any).void_reason && (
-                  <div className="text-xs text-muted-foreground mt-1">
-                    Reason: {(sale as any).void_reason}
-                  </div>
-                )}
+                <div className="text-xs text-muted-foreground mt-1">
+                  {sale.notes.split('\n')[0]}
+                </div>
               </div>
             )}
           </DialogHeader>
