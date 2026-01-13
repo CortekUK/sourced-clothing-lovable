@@ -563,10 +563,7 @@ export default function Dashboard() {
         </div>
       </AppLayout>;
   }
-  return <AppLayout title="Dashboard" subtitle="Business overview and key metrics">
-      
-      {/* Quick Actions Bar */}
-      <QuickActionsBar />
+  return <AppLayout title="Dashboard" subtitle="Business overview and key metrics" headerActions={<QuickActionsBar />}>
 
       {/* Top KPI Row - Cards based on role */}
       <div className={`grid gap-4 grid-cols-1 sm:grid-cols-2 ${isOwner ? 'lg:grid-cols-5' : 'lg:grid-cols-4'} mb-6 md:mb-8`}>

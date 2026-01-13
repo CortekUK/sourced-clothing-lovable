@@ -33,7 +33,7 @@ export function QuickActionsBar() {
   ];
 
   return (
-    <div className="flex flex-wrap gap-2 md:gap-3 mb-6 md:mb-8">
+    <div className="flex flex-wrap gap-2">
       {actions.map((action) => (
         <Button
           key={action.label}
