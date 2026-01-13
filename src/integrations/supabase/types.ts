@@ -1599,7 +1599,7 @@ export type Database = {
         | "adjustment"
         | "return_in"
         | "return_out"
-      user_role: "owner" | "staff"
+      user_role: "owner" | "manager" | "staff"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -1755,7 +1755,7 @@ export const Constants = {
         "return_in",
         "return_out",
       ],
-      user_role: ["owner", "staff"],
+      user_role: ["owner", "manager", "staff"],
     },
   },
 } as const
