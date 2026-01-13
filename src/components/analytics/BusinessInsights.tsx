@@ -75,9 +75,12 @@ export function BusinessInsights() {
         </CardHeader>
         <CardContent>
           <div className="text-center py-6">
-            <Lightbulb className="h-12 w-12 text-muted-foreground mx-auto mb-2 opacity-50" />
-            <p className="text-muted-foreground font-medium">No insights available</p>
-            <p className="text-sm text-muted-foreground">Insights will appear as data accumulates</p>
+            <Lightbulb className="h-12 w-12 text-muted-foreground mx-auto mb-3 opacity-50" />
+            <p className="text-muted-foreground font-medium mb-1">No insights available yet</p>
+            <p className="text-sm text-muted-foreground mb-4">Start making sales to see performance data</p>
+            <Button variant="outline" size="sm" onClick={() => navigate('/sales')}>
+              Make a Sale
+            </Button>
           </div>
         </CardContent>
       </Card>

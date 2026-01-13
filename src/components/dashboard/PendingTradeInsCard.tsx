@@ -21,29 +21,37 @@ export function PendingTradeInsCard() {
     );
   }
 
+  const hasItems = (stats?.count || 0) > 0;
+
   return (
     <Card 
-      className="shadow-card hover:shadow-elegant transition-all duration-300 cursor-pointer"
+      className="shadow-card hover:shadow-elegant transition-all duration-300 cursor-pointer group"
       onClick={() => navigate('/products/intake')}
     >
       <CardContent className="p-6">
         <div className="flex items-center justify-between mb-4">
-          <h3 className="font-luxury text-lg font-semibold">Pending Trade-Ins</h3>
+          <h3 className="font-luxury text-base md:text-lg font-semibold group-hover:text-primary transition-colors">Pending Trade-Ins</h3>
           <div className="flex items-center gap-2">
-            <Repeat className="h-4 w-4 text-blue-500" />
-            <ArrowUpRight className="h-3 w-3 text-muted-foreground" />
+            <Repeat className="h-4 w-4 text-primary" />
+            <ArrowUpRight className="h-3 w-3 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
           </div>
         </div>
-        <div className="space-y-2">
-          <p className="text-2xl font-bold text-blue-600 dark:text-blue-400 tracking-tight">
+        <div className="space-y-3">
+          <p className="text-2xl font-bold text-primary tracking-tight">
             {stats?.count || 0} {stats?.count === 1 ? 'item' : 'items'}
           </p>
           <p className="text-sm text-muted-foreground">
             Total Value: {formatCurrency(stats?.totalValue || 0)}
           </p>
-          <p className="text-xs text-muted-foreground mt-2">
-            Convert to inventory from the intake queue
-          </p>
+          {hasItems ? (
+            <p className="text-xs text-primary font-medium mt-2">
+              Click to process pending items →
+            </p>
+          ) : (
+            <p className="text-xs text-muted-foreground mt-2">
+              No items waiting to be processed
+            </p>
+          )}
         </div>
       </CardContent>
     </Card>

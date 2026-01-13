@@ -17,32 +17,44 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContai
 import { useStockStatus } from '@/hooks/useStockStatus';
 import { usePendingPartExchangesStats } from '@/hooks/usePartExchanges';
 import { PendingTradeInsCard } from '@/components/dashboard/PendingTradeInsCard';
-
 import { PurchasingSnapshotCards } from '@/components/dashboard/PurchasingSnapshotCards';
+import { QuickActionsBar } from '@/components/dashboard/QuickActionsBar';
 
-// Enhanced KPI Card Component
+// Enhanced KPI Card Component - Now clickable
 const KPICard = ({
   title,
   value,
   icon: Icon,
-  isPrimary = false
+  isPrimary = false,
+  onClick
 }: {
   title: string;
   value: string;
   icon: any;
   isPrimary?: boolean;
+  onClick?: () => void;
 }) => {
-  return <Card className="shadow-card hover:shadow-elegant transition-all duration-300 relative h-full flex flex-col">
+  const content = (
+    <Card className={`shadow-card hover:shadow-elegant transition-all duration-300 relative h-full flex flex-col ${onClick ? 'cursor-pointer group' : ''}`}>
       <CardHeader className="flex flex-row items-start justify-between space-y-0 pb-2 p-4 md:p-6 min-h-[60px]">
-        <CardTitle className="text-xs md:text-sm font-medium text-muted-foreground">{title}</CardTitle>
-        <Icon className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+        <CardTitle className="text-xs md:text-sm font-medium text-muted-foreground group-hover:text-foreground transition-colors">{title}</CardTitle>
+        <div className="flex items-center gap-1">
+          <Icon className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+          {onClick && <ChevronRight className="h-3 w-3 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />}
+        </div>
       </CardHeader>
       <CardContent className="p-4 md:p-6 pt-0 mt-auto">
         <div className={`text-xl sm:text-2xl font-bold tracking-tight font-luxury ${isPrimary ? 'text-primary' : 'text-foreground'}`}>
           {value}
         </div>
       </CardContent>
-    </Card>;
+    </Card>
+  );
+
+  if (onClick) {
+    return <div onClick={onClick}>{content}</div>;
+  }
+  return content;
 };
 
 // Enhanced Recent Sales Component with thumbnails and staff
@@ -86,8 +98,11 @@ const EnhancedRecentSales = () => {
         <CardContent>
           <div className="text-center py-8">
             <ShoppingCart className="h-12 w-12 text-muted-foreground mx-auto mb-3 opacity-50" />
-            <p className="text-muted-foreground font-medium">No sales yet today</p>
-            <p className="text-sm text-muted-foreground">Sales will appear here as they're made</p>
+            <p className="text-muted-foreground font-medium mb-1">No sales yet today</p>
+            <p className="text-sm text-muted-foreground mb-4">Sales will appear here as they're made</p>
+            <Button variant="default" size="sm" onClick={() => navigate('/sales')}>
+              Make Your First Sale
+            </Button>
           </div>
         </CardContent>
       </Card>;
@@ -550,20 +565,50 @@ export default function Dashboard() {
   }
   return <AppLayout title="Dashboard" subtitle="Business overview and key metrics">
       
+      {/* Quick Actions Bar */}
+      <QuickActionsBar />
+
       {/* Top KPI Row - Cards based on role */}
       <div className={`grid gap-4 grid-cols-1 sm:grid-cols-2 ${isOwner ? 'lg:grid-cols-5' : 'lg:grid-cols-4'} mb-6 md:mb-8`}>
-        <KPICard title="Today's Sales" value={formatCurrency(todayStats?.sales || 0)} icon={PoundSterling} isPrimary />
+        <KPICard 
+          title="Today's Sales" 
+          value={formatCurrency(todayStats?.sales || 0)} 
+          icon={PoundSterling} 
+          isPrimary 
+          onClick={() => navigate('/sales/history')}
+        />
 
-        <KPICard title="Transactions" value={(todayStats?.transactions || 0).toString()} icon={Receipt} />
+        <KPICard 
+          title="Transactions" 
+          value={(todayStats?.transactions || 0).toString()} 
+          icon={Receipt} 
+          onClick={() => navigate('/transactions')}
+        />
 
         {/* Gross Profit - Owner only */}
         {isOwner && (
-          <KPICard title="Gross Profit Today" value={formatCurrency(todayStats?.grossProfit || 0)} icon={TrendingUp} isPrimary />
+          <KPICard 
+            title="Gross Profit Today" 
+            value={formatCurrency(todayStats?.grossProfit || 0)} 
+            icon={TrendingUp} 
+            isPrimary 
+            onClick={() => navigate('/reports')}
+          />
         )}
 
-        <KPICard title="Items Sold" value={(todayStats?.itemsSold || 0).toString()} icon={ShoppingCart} />
+        <KPICard 
+          title="Items Sold" 
+          value={(todayStats?.itemsSold || 0).toString()} 
+          icon={ShoppingCart} 
+          onClick={() => navigate('/sales/history')}
+        />
 
-        <KPICard title="Inventory Value" value={formatCurrency(todayStats?.totalInventoryValue || 0)} icon={Package} />
+        <KPICard 
+          title="Inventory Value" 
+          value={formatCurrency(todayStats?.totalInventoryValue || 0)} 
+          icon={Package} 
+          onClick={() => navigate('/products')}
+        />
       </div>
 
       {/* Recent Sales Section */}
