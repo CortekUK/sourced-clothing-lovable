@@ -16,9 +16,10 @@ interface AppLayoutProps {
   subtitle?: string;
   showSearch?: boolean;
   showDatePicker?: boolean;
+  headerActions?: ReactNode;
 }
 
-export const AppLayout = ({ children, title, subtitle, showSearch = false, showDatePicker = false }: AppLayoutProps) => {
+export const AppLayout = ({ children, title, subtitle, showSearch = false, showDatePicker = false, headerActions }: AppLayoutProps) => {
   const location = useLocation();
   const navigate = useNavigate();
   const [commandPaletteOpen, setCommandPaletteOpen] = useState(false);
@@ -111,10 +112,19 @@ export const AppLayout = ({ children, title, subtitle, showSearch = false, showD
             >
               {title && (
                 <div className="mb-4 md:mb-6">
-                  <h1 className="font-luxury text-2xl md:text-3xl font-bold tracking-tight">{title}</h1>
-                  {subtitle && (
-                    <p className="text-muted-foreground mt-1 text-sm md:text-base">{subtitle}</p>
-                  )}
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4">
+                    <div>
+                      <h1 className="font-luxury text-2xl md:text-3xl font-bold tracking-tight">{title}</h1>
+                      {subtitle && (
+                        <p className="text-muted-foreground mt-1 text-sm md:text-base">{subtitle}</p>
+                      )}
+                    </div>
+                    {headerActions && (
+                      <div className="flex-shrink-0">
+                        {headerActions}
+                      </div>
+                    )}
+                  </div>
                 </div>
               )}
               {children}
