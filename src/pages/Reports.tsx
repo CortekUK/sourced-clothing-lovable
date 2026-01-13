@@ -4,7 +4,6 @@ import { AppLayout } from '@/components/layout/AppLayout';
 import { FinancialTab } from '@/components/reports/FinancialTab';
 import { ProductsTab } from '@/components/reports/ProductsTab';
 import { SuppliersTab } from '@/components/reports/SuppliersTab';
-import { PxConsignmentTab } from '@/components/reports/PxConsignmentTab';
 import { BarChart3, Building2, PoundSterling, Package } from 'lucide-react';
 
 export default function ConsolidatedReports() {
@@ -18,7 +17,7 @@ export default function ConsolidatedReports() {
       <div className="space-y-6">
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="grid w-full grid-cols-2 md:grid-cols-4 h-auto">
+          <TabsList className="grid w-full grid-cols-3 h-auto">
             <TabsTrigger value="financial" className="flex items-center gap-2 py-2">
               <PoundSterling className="h-4 w-4" />
               <span className="hidden sm:inline">Financial</span>
@@ -32,11 +31,6 @@ export default function ConsolidatedReports() {
               <Building2 className="h-4 w-4" />
               Suppliers
             </TabsTrigger>
-            <TabsTrigger value="px-consignment" className="flex items-center gap-2 py-2">
-              <BarChart3 className="h-4 w-4" />
-              <span className="hidden sm:inline">PX & Consignment</span>
-              <span className="sm:hidden">PX</span>
-            </TabsTrigger>
           </TabsList>
 
           <TabsContent value="financial">
@@ -49,10 +43,6 @@ export default function ConsolidatedReports() {
 
           <TabsContent value="suppliers">
             <SuppliersTab />
-          </TabsContent>
-
-          <TabsContent value="px-consignment">
-            <PxConsignmentTab />
           </TabsContent>
         </Tabs>
       </div>

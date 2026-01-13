@@ -1,5 +1,5 @@
 import { Button } from '@/components/ui/button';
-import { ShoppingCart, Plus, Repeat, AlertTriangle } from 'lucide-react';
+import { ShoppingCart, Plus, AlertTriangle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 export function QuickActionsBar() {
@@ -16,12 +16,6 @@ export function QuickActionsBar() {
       label: 'Add Product',
       icon: Plus,
       onClick: () => navigate('/products?action=add'),
-      variant: 'outline' as const,
-    },
-    {
-      label: 'Record Trade-In',
-      icon: Repeat,
-      onClick: () => navigate('/products/intake'),
       variant: 'outline' as const,
     },
     {

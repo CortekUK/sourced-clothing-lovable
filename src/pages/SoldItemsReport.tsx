@@ -34,7 +34,7 @@ import { SaleDetailModal } from '@/components/transactions/SaleDetailModal';
 import { ProductDetailModal } from '@/components/modals/ProductDetailModal';
 import { format, startOfDay, endOfDay } from 'date-fns';
 import { ConsignmentBadge } from '@/components/ui/consignment-badge';
-import { TradeInBadge } from '@/components/ui/trade-in-badge';
+
 import type { DateRange } from '@/types';
 
 interface SoldItemsFilters {

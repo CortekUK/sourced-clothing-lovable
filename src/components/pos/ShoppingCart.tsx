@@ -2,31 +2,24 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { formatCurrency, calculateCartTotals } from '@/lib/utils';
-import type { CartItem, PartExchangeItem } from '@/types';
-import { PartExchangeItem as PartExchangeItemComponent } from './PartExchangeItem';
+import type { CartItem } from '@/types';
 import { ConsignmentBadge } from '@/components/ui/consignment-badge';
 import { 
   ShoppingCart, 
   Plus,
   Minus,
   Trash2,
-  Package,
-  Hash,
-  Repeat
+  Package
 } from 'lucide-react';
 
 export type DiscountType = 'percentage' | 'fixed';
 
 interface ShoppingCartProps {
   items: CartItem[];
-  partExchanges: PartExchangeItem[];
   onUpdateQuantity: (productId: number, quantity: number) => void;
   onRemoveItem: (productId: number) => void;
-  onRemovePartExchange: (id: string) => void;
-  onAddPartExchange: () => void;
   discount: number;
   discountType: DiscountType;
-  onSerialAssignment?: (item: CartItem) => void;
 }
 
 export function ShoppingCartComponent({ 

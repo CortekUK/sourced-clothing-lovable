@@ -37,8 +37,6 @@ import type { EnhancedProductFilters as EnhancedProductFiltersType } from '@/hoo
 import { useStockStatus, getStockBadge } from '@/hooks/useStockStatus';
 import { useConsignmentAgreements } from '@/hooks/useConsignmentAgreements';
 import { ConsignmentBadge } from '@/components/ui/consignment-badge';
-import { TradeInBadge } from '@/components/ui/trade-in-badge';
-import { useProductTradeInStatus } from '@/hooks/useProductTradeInStatus';
 import { DuplicateProductModal } from '@/components/modals/DuplicateProductModal';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 

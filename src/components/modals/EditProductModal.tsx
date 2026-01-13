@@ -14,8 +14,6 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { useCreateProduct, useUpdateProduct, useDeleteProduct, useSuppliers, useStockAdjustment } from '@/hooks/useDatabase';
 import { useLocations } from '@/hooks/useLocations';
 import { useDocumentUpload } from '@/hooks/useProductDocuments';
-import { usePartExchangesByProduct } from '@/hooks/usePartExchanges';
-import { useProductTradeInStatus } from '@/hooks/useProductTradeInStatus';
 import { useToast } from '@/hooks/use-toast';
 import { Product, DocumentType } from '@/types';
 import {
@@ -66,10 +64,6 @@ export function EditProductModal({ product, open, onOpenChange }: EditProductMod
   const { toast } = useToast();
   
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
-  
-  // Fetch related data for trade-in products
-  const { data: partExchangeData } = usePartExchangesByProduct(product?.id || 0);
-  const { data: isTradeIn } = useProductTradeInStatus(product?.id || 0);
   
   const isEditMode = !!product;
   
@@ -321,8 +315,8 @@ export function EditProductModal({ product, open, onOpenChange }: EditProductMod
       return;
     }
     
-    // Skip supplier validation for trade-in products
-    if (!isTradeIn && formData.supplier_type === 'registered' && !formData.supplier_id) {
+    // Validate supplier
+    if (formData.supplier_type === 'registered' && !formData.supplier_id) {
       toast({
         title: "Validation Error",
         description: "Please select a supplier.",
@@ -455,11 +449,6 @@ export function EditProductModal({ product, open, onOpenChange }: EditProductMod
                   Consignment
                 </Badge>
               )}
-              {isTradeIn && (
-                <Badge variant="outline" className="border-blue-200 text-blue-700 bg-blue-50 text-xs">
-                  Part Exchange
-                </Badge>
-              )}
             </div>
           </div>
         </DialogHeader>
@@ -476,45 +465,7 @@ export function EditProductModal({ product, open, onOpenChange }: EditProductMod
                 </div>
               </AccordionTrigger>
               <AccordionContent className="space-y-6 pt-4 pb-6 px-1.5">
-                {isTradeIn && partExchangeData ? (
-                  // Part Exchange Customer Details
-                  <div className="p-6 bg-blue-50 border border-blue-200 rounded-lg">
-                    <div className="flex items-center gap-3 mb-4">
-                      <User className="h-5 w-5 text-blue-600" />
-                      <h4 className="font-luxury text-lg text-blue-900">Part Exchange Customer</h4>
-                    </div>
-                    <div className="space-y-3">
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <div>
-                          <Label className="text-sm font-medium">Customer Name</Label>
-                          <p className="font-medium">{partExchangeData.customer_name || 'Not specified'}</p>
-                        </div>
-                        <div>
-                          <Label className="text-sm font-medium">Contact</Label>
-                          <p>{partExchangeData.customer_contact || 'Not provided'}</p>
-                        </div>
-                      </div>
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <div>
-                          <Label className="text-sm font-medium">Allowance</Label>
-                          <p className="font-luxury text-lg font-semibold text-primary">
-                            {formatCurrency(partExchangeData.allowance)}
-                          </p>
-                        </div>
-                        <div>
-                          <Label className="text-sm font-medium">Trade-in Date</Label>
-                          <p>{partExchangeData.created_at ? new Date(partExchangeData.created_at).toLocaleDateString() : 'Not recorded'}</p>
-                        </div>
-                      </div>
-                      {partExchangeData.notes && (
-                        <div>
-                          <Label className="text-sm font-medium">Notes</Label>
-                          <p className="text-sm text-muted-foreground">{partExchangeData.notes}</p>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                ) : (product as any).is_consignment ? (
+              {(product as any).is_consignment ? (
                   // Consignment Supplier Details
                   <div className="p-6 bg-warning/5 border border-warning/20 rounded-lg">
                     <div className="flex items-center gap-3 mb-4">
