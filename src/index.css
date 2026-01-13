@@ -148,8 +148,8 @@
   .login-logo {
     display: block;
     margin: 0 auto;
-    height: 170px;
-    max-width: 340px;
+    height: 140px;
+    max-width: 280px;
     width: auto;
     image-rendering: auto;
     filter: drop-shadow(0 0 14px rgba(212, 175, 55, 0.25));
