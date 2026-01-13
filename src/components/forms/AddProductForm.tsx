@@ -9,7 +9,7 @@ import { Switch } from '@/components/ui/switch';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { Separator } from '@/components/ui/separator';
 import { MultiImageUpload } from '@/components/ui/multi-image-upload';
-import { RegisteredWatchSection } from '@/components/forms/RegisteredWatchSection';
+import { PremiumItemSection } from '@/components/forms/PremiumItemSection';
 import { ProductCreationDocuments } from '@/components/documents/ProductCreationDocuments';
 import { useSuppliers } from '@/hooks/useSuppliers';
 import { useLocations } from '@/hooks/useLocations';
@@ -610,8 +610,8 @@ export function AddProductForm({ onSubmit, onCancel, isLoading = false, initialD
             
             <Separator />
             
-            {/* Registered Watch Section */}
-            <RegisteredWatchSection
+            {/* Premium Item Section */}
+            <PremiumItemSection
               isRegistered={formData.is_registered}
               onRegisteredChange={(checked) => setFormData({...formData, is_registered: checked})}
               documents={documents}

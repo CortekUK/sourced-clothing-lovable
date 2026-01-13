@@ -112,11 +112,12 @@ export function EditPartExchangeModal({ open, onOpenChange, partExchange }: Edit
                   <SelectValue placeholder="Select category" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="Rings">Rings</SelectItem>
-                  <SelectItem value="Necklaces">Necklaces</SelectItem>
-                  <SelectItem value="Earrings">Earrings</SelectItem>
-                  <SelectItem value="Bracelets">Bracelets</SelectItem>
-                  <SelectItem value="Watches">Watches</SelectItem>
+                  <SelectItem value="Tops">Tops</SelectItem>
+                  <SelectItem value="Bottoms">Bottoms</SelectItem>
+                  <SelectItem value="Dresses">Dresses</SelectItem>
+                  <SelectItem value="Outerwear">Outerwear</SelectItem>
+                  <SelectItem value="Shoes">Shoes</SelectItem>
+                  <SelectItem value="Accessories">Accessories</SelectItem>
                   <SelectItem value="Other">Other</SelectItem>
                 </SelectContent>
               </Select>

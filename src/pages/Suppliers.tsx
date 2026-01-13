@@ -266,7 +266,7 @@ function SupplierCard({ supplier, onView }: SupplierCardProps) {
                   ...editForm, 
                   tags: e.target.value.split(',').map(t => t.trim()).filter(Boolean) 
                 })}
-                placeholder="e.g. Luxury Watches, Diamonds, Gold"
+                placeholder="e.g. Designer Brands, Vintage, Streetwear"
               />
             </div>
             

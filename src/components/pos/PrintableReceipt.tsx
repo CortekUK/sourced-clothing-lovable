@@ -242,8 +242,8 @@ Thank you for your business!`;
             <div className="flex justify-center mb-2">
               <Logo variant="full" size="sm" />
             </div>
-            <h1 className="font-bold text-lg font-luxury">Fashion Store</h1>
-            <p className="text-sm">Premium Clothing & Accessories</p>
+            <h1 className="font-bold text-lg font-luxury">Sourced UK</h1>
+            <p className="text-sm">Quality Pre-Loved Fashion</p>
             <p className="text-xs">
               123 High Street, London SW1A 1AA<br />
               Tel: 020 7123 4567
